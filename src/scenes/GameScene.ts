@@ -32,10 +32,10 @@ export class GameScene extends Phaser.Scene implements OnCreate, OnUpdate {
     this.eventBus = new PhaserEventBus();
 
     //* 2. Composición de features
-    const startingLevel = 30;
-    this.playerFeature = PlayerComposer.compose(this, this.eventBus, this.worldFeature.playableBounds);
+    const startingLevel = 50;
+    this.playerFeature = PlayerComposer.compose(this, this.eventBus, this.worldFeature.playableBounds, startingLevel);
     this.experienceFeature = ExperienceComposer.compose(this, this.eventBus, this.playerFeature.player, this.worldFeature.playableBounds, startingLevel);
-    this.hudFeature = HudComposer.compose(this, this.eventBus, this.experienceFeature.experience);
+    this.hudFeature = HudComposer.compose(this, this.eventBus, this.experienceFeature.experience, this.playerFeature.player);
 
     //* 3. Integración entre features.
     this.worldFeature.setCameraFollow(this.playerFeature.view.gameObject);

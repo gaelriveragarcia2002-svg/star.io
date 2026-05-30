@@ -3,6 +3,8 @@ import { ExperienceOrbCollectedEvent } from "@/features/experience/domain/events
 import { LevelUpEvent } from "@/features/experience/domain/events/LevelUpEvent";
 import { Level } from "@/features/experience/domain/entities/Level";
 
+
+// * Servicio que se encarga de gestionar el estado de experiencia del usuario.
 export class ExperienceService {
   private readonly level: Level;
   private readonly eventBus: IEventBus;

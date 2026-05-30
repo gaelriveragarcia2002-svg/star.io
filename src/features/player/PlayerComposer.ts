@@ -8,13 +8,14 @@ import type { IEventBus } from '@/core/domain/events/IEventBus';
 import type { WorldBounds } from '../world/domain/WorldBounds';
 import type { PlayerFeature } from './PlayerFeature';
 import { DashPlayerUseCase } from './application/use-cases/DashPlayerUseCase';
+import { PlayerProgressionService } from './application/services/PlayerProgressionService';
 
 export class PlayerComposer {
 
-  public static compose(scene: Phaser.Scene, eventBus: IEventBus, playableBounds: WorldBounds): PlayerFeature {
+  public static compose(scene: Phaser.Scene, eventBus: IEventBus, playableBounds: WorldBounds, startingLevel: number): PlayerFeature {
     const inputProvider = new PhaserKeyboardInput(scene);
 
-    // Spawn en el centro exacto de la zona jugable.
+    //* Spawn en el centro exacto de la zona jugable.
     const spawnX = (playableBounds.minX + playableBounds.maxX) / 2;
     const spawnY = (playableBounds.minY + playableBounds.maxY) / 2;
     const player = Player.create('player-1', new Vector2(spawnX, spawnY), 250, 100);
@@ -23,7 +24,11 @@ export class PlayerComposer {
     const dashPlayerUseCase = new DashPlayerUseCase(inputProvider, eventBus);
     const view = new PlayerView(scene, player, eventBus);
 
+    //* El servicio de progresión del jugador se encarga de escuchar eventos relacionados al jugador y actualizar su experiencia y nivel en consecuencia. Se crea aquí porque depende tanto del event bus como del jugador.
+    const progressionService = new PlayerProgressionService(eventBus, player, startingLevel);
+
     return {
+      progression: progressionService,
       player,
       view,
       update: (deltaSeconds: number) => {

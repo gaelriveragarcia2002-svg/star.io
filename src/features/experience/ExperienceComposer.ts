@@ -10,7 +10,6 @@ import { ExperienceOrbSpawnedEvent } from "./domain/events/ExperienceOrbSpawnedE
 import { ExperienceOrbView } from "./presentation/ExperienceOrbView";
 import type { WorldBounds } from "../world/domain/WorldBounds";
 import type { ExperienceFeature } from "./ExperienceFeature";
-import { PlayerProgressionService } from "../player/application/services/PlayerProgressionService";
 
 export class ExperienceComposer {
 
@@ -34,11 +33,8 @@ export class ExperienceComposer {
     const maxActiveOrbs = Math.round(targetDensity * (playableW * playableH) / 1_000_000);
     const orbSpawnInterval = 250;
 
-
     //* El servicio de experiencia se encarga de mantener el estado de la experiencia y nivel del jugador. Se crea aquí porque es un punto de integración entre la lógica de experiencia y la presentación (HUD).
     const experience = new ExperienceService(eventBus, startingLevel);
-    //* El servicio de progresión del jugador se encarga de escuchar eventos relacionados al jugador y actualizar su experiencia y nivel en consecuencia. Se crea aquí porque depende tanto del event bus como del jugador.
-    const progression = new PlayerProgressionService(eventBus, player, startingLevel);
 
     //* Los orbes spawnean dentro de la zona jugable con un margen de 50px.
     const spawnUseCase = new SpawnExperienceOrbsUseCase(
@@ -67,7 +63,6 @@ export class ExperienceComposer {
 
     return {
       experience: experience,
-      progression: progression,
       update: () => {
         if (orbs.length < maxActiveOrbs) spawnUseCase.execute();
         collectUseCase.execute(player, orbs);
